@@ -14,7 +14,7 @@ const (
 	OverrideSlotSession
 )
 
-const defaultPersistOverride = `{"dns":{"enable": false}}`
+const defaultPersistOverride = `{"dns":{"enable": null}}`
 const defaultSessionOverride = `{}`
 
 var sessionOverride = defaultSessionOverride
