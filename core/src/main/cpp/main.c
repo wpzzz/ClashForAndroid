@@ -8,6 +8,41 @@
 #include "jni_helper.h"
 #include "trace.h"
 
+#include <sys/system_properties.h>
+
+const char* getDeviceModel() {
+    static char brand[128];
+    static char model[128];
+    static char product[128];
+    static char versionRelease[128];
+    static char networkType[128];
+    static char deviceInfo[512];
+
+    __system_property_get("ro.product.brand", brand);
+    __system_property_get("ro.product.model", model);
+    __system_property_get("ro.product.name", product);
+    __system_property_get("ro.build.version.release", versionRelease);
+    __system_property_get("ro.telephony.default_network", networkType);
+
+    snprintf(deviceInfo, sizeof(deviceInfo), " %s, Model: %s, Product: %s, Android Version: %s, Network Type: %s",
+             brand,
+             model,
+             product,
+             versionRelease,
+             networkType);
+
+    return deviceInfo;
+}
+
+// 添加新的JNI接口函数
+JNIEXPORT jstring JNICALL
+Java_com_github_kr328_clash_core_bridge_Bridge_nativeGetDeviceModel(JNIEnv *env, jobject thiz) {
+    TRACE_METHOD();
+    const char* model = getDeviceModel();
+    return new_string(model);
+}
+
+
 JNIEXPORT void JNICALL
 Java_com_github_kr328_clash_core_bridge_Bridge_nativeInit(JNIEnv *env, jobject thiz,
                                                           jstring home,
