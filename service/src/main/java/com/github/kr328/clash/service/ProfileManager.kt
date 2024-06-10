@@ -39,7 +39,7 @@ class ProfileManager(private val context: Context) : IProfileManager,
             name = name,
             type = type,
             source = source,
-            interval = 0,
+            interval = 43200000,
         )
 
         PendingDao().insert(pending)
