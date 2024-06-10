@@ -1,5 +1,12 @@
 package config
+/*
+#cgo LDFLAGS: -landroid -llog
+#include <stdlib.h>
 
+// 声明从C文件中导出的函数
+const char* getDeviceModel();
+*/
+import "C"
 import (
 	"encoding/json"
 	"fmt"
@@ -32,15 +39,20 @@ var client = &http.Client{
 	Timeout: 60 * time.Second,
 }
 
+func GetDeviceModel() string {
+    cStr := C.getDeviceModel()
+    return C.GoString(cStr)
+}
+
 func openUrl(url string) (io.ReadCloser, error) {
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return nil, err
 	}
-
-	request.Header.Set("User-Agent", "ClashForAndroid/"+app.VersionName())
-
+	deviceModel := GetDeviceModel()
+        userAgent := fmt.Sprintf("ClashForAndroid/%s (%s)", app.VersionName(), deviceModel)
+        request.Header.Set("User-Agent", userAgent)
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
